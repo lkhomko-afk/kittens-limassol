@@ -7,6 +7,7 @@
 <meta property="og:title" content="4 котёнка ищут дом · Лимассол">
 <meta property="og:description" content="Здоровы, обработаны от глистов, можно забрать сразу. Пишите в WhatsApp или Telegram.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://lkhomko-afk.github.io/kittens-limassol/">
 <meta property="og:image" content="https://lkhomko-afk.github.io/kittens-limassol/photos/box.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -84,6 +85,14 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .btn.chat:hover{filter:brightness(1.08)}
 .btn.ghost{background:transparent;color:inherit;border:2px solid currentColor;opacity:.85}
 @media (max-width:520px){.actions{width:100%}.btn.chat{flex:1;justify-content:center}.btn.ghost{width:100%}}
+.pair{margin:-16px 0 0;font-weight:700;color:var(--sea)}
+.memo{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 18px}
+.memo summary{font:700 18px var(--display);cursor:pointer}
+.memo summary:focus-visible{outline:3px solid var(--sun);outline-offset:4px}
+.memo ul{margin:12px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.share-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.share-row .note{flex:1 1 280px}
+.btn.share{color:var(--sea);font-size:14px;padding:10px 16px}
 .note{font-size:13px;color:var(--muted);margin:0}
 </style>
 </head>
@@ -110,10 +119,19 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 
   <section class="grid" id="kittens" aria-label="Котята"></section>
 
+  <p class="pair" data-t="pair"></p>
+
   <section class="cols">
-    <div class="box"><h2 data-t="termsH"></h2><ul id="terms"></ul></div>
+    <div class="box"><h2 data-t="getH"></h2><ul id="get"></ul></div>
     <div class="box"><h2 data-t="howH"></h2><ul id="how"></ul></div>
   </section>
+
+  <details class="memo">
+    <summary data-t="memoH"></summary>
+    <ul id="memo"></ul>
+  </details>
+
+  <section class="box"><h2 data-t="termsH"></h2><ul id="terms"></ul></section>
 
   <section class="contact">
     <div>
@@ -132,7 +150,10 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
       <button class="btn ghost" id="copy-btn" type="button" data-t="copy"></button>
     </div>
   </section>
-  <p class="note" data-t="note"></p>
+  <div class="share-row">
+    <p class="note" data-t="note"></p>
+    <button class="btn ghost share" id="share-btn" type="button" data-t="share"></button>
+  </div>
 </div>
 
 <script>
@@ -162,7 +183,13 @@ const T = {
       f1:"2 мальчика и 2 девочки", f2:"≈ 4 недели", f4:"Здоровы · обработаны от глистов", f3:"Можно забрать сразу",
       namesNote:"Имена временные, чтобы котят было проще различать. Настоящее имя дадите вы.",
       termsH:"Условия", howH:"Как забрать",
-      terms:["Бесплатно, в ответственные руки","Стерилизация, когда котёнок подрастёт","Только домашнее содержание или безопасный двор","Можно присылать фото, как он растёт — нам будет приятно"],
+      terms:["Бесплатно","Когда котёнок подрастёт, его нужно будет стерилизовать (в 5–6 месяцев)","Если не сложится, напишите нам: заберём обратно или поможем пристроить"],
+      pair:"Вдвоём котятам теплее и спокойнее. Можно взять парой.",
+      getH:"Что вы получите",
+      get:["Смесь и паштет на первые дни","Короткую памятку по уходу (ниже)","Нашу поддержку в чате, если появятся вопросы"],
+      memoH:"Памятка: как ухаживать за котёнком в 4 недели",
+      memo:["Смесь для котят (KMR или Royal Canin Babycat Milk) каждые 4–5 часов, тёплую. Коровье молоко нельзя.","3–4 раза в день чайная ложка паштета для котят, размятого со смесью.","Тепло: место без сквозняков и грелка под половиной лежанки.","Плоский лоток. После еды сажайте в него котёнка.","Вялость, отказ от еды, понос или гноящиеся глаза — сразу к ветеринару."],
+      share:"Поделиться ссылкой", shared:"Ссылка скопирована",
       how:["Напишите, какой котёнок понравился","Договоримся о встрече, можно уже сегодня","Покажем, как кормить и ухаживать","Забираете котёнка вместе с запасом смеси"],
       contactH:"Пишите, если хотите котёнка", copy:"Скопировать контакт", copied:"Скопировано",
       status:{free:"Свободен",reserved:"Забронирован",taken:"Уже дома"},
@@ -172,7 +199,13 @@ const T = {
       f1:"2 boys & 2 girls", f2:"≈ 4 weeks old", f4:"Healthy · dewormed", f3:"Ready to go now",
       namesNote:"The names are temporary nicknames so you can tell them apart. You'll choose the real one.",
       termsH:"Terms", howH:"How to adopt",
-      terms:["Free, to responsible homes","Neutering once old enough","Indoor or a safe yard only","Photo updates are always welcome"],
+      terms:["Free","Neutering once they're old enough (5–6 months)","If it doesn't work out, message us: we'll take the kitten back or help rehome"],
+      pair:"Kittens are warmer and calmer in twos. Adopting a pair is welcome.",
+      getH:"What you get",
+      get:["Formula and wet food for the first days","A short care guide (below)","Our support in chat for any questions"],
+      memoH:"Care guide: a 4-week-old kitten",
+      memo:["Kitten milk formula (KMR or Royal Canin Babycat Milk) every 4–5 hours, warm. No cow's milk.","3–4 times a day, a teaspoon of kitten pâté mashed with formula.","Warmth: a draught-free spot with a heat pad under half the bed.","A shallow litter tray. Put the kitten in it after meals.","Lethargy, not eating, diarrhoea or sticky eyes: see a vet right away."],
+      share:"Share link", shared:"Link copied",
       how:["Message us with the kitten you like","Arrange a visit, even today","We show you how to feed and care for them","Take your kitten home with a starter supply of formula"],
       contactH:"Message us to adopt", copy:"Copy contact", copied:"Copied",
       status:{free:"Available",reserved:"Reserved",taken:"Adopted"},
@@ -197,6 +230,8 @@ function render(){
   document.querySelectorAll("[data-t]").forEach(el => el.innerHTML = t[el.dataset.t]);
   document.getElementById("terms").innerHTML = t.terms.map(x=>`<li>${x}</li>`).join("");
   document.getElementById("how").innerHTML = t.how.map(x=>`<li>${x}</li>`).join("");
+  document.getElementById("get").innerHTML = t.get.map(x=>`<li>${x}</li>`).join("");
+  document.getElementById("memo").innerHTML = t.memo.map(x=>`<li>${x}</li>`).join("");
   document.getElementById("handle").textContent = CONTACT;
   document.getElementById("wa-btn").href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_TEXT[lang])}`;
   document.getElementById("tg-btn").href = `https://t.me/${TG_USER}`;
@@ -230,6 +265,18 @@ document.getElementById("copy-btn").addEventListener("click", e => {
     const r = document.createRange(); r.selectNodeContents(document.getElementById("handle"));
     const s = getSelection(); s.removeAllRanges(); s.addRange(r);
   });
+});
+const SHARE_URL = "https://lkhomko-afk.github.io/kittens-limassol/";
+document.getElementById("share-btn").addEventListener("click", async e => {
+  const btn = e.currentTarget, url = SHARE_URL + "#" + lang;
+  try {
+    if (navigator.share) { await navigator.share({ title: document.title, url }); return; }
+  } catch (err) { if (err && err.name === "AbortError") return; }
+  try {
+    await navigator.clipboard.writeText(url);
+    btn.textContent = T[lang].shared;
+    setTimeout(() => btn.textContent = T[lang].share, 1800);
+  } catch (err) { btn.textContent = url; }
 });
 render();
 </script>
